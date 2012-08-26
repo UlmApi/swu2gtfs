@@ -12,6 +12,7 @@ public class trip {
 	private String shape_id;
 	private int direction_id;
 	private Vector<stopTime> stopVector;
+	private Vector<Integer> stopIdVector;
 	private boolean mon = false;
 	private boolean tue = false;
 	private boolean wed = false;
@@ -36,11 +37,13 @@ public class trip {
 		this.setBlock_id(block_id);
 		this.setShape_id(shape_id);
 		stopVector = new Vector<stopTime>();
+		stopIdVector = new Vector<Integer>();
 	}
 	
 	
-	public void addStop(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign) {
-		stopVector.add(new stopTime(arrival_time, departure_time, stop_id, stop_sequence, stop_headsign));
+	public void addStop(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign, String departure_time_24h) {
+		stopVector.add(new stopTime(arrival_time, departure_time, stop_id, stop_sequence, stop_headsign, departure_time_24h));
+		stopIdVector.add(stop_id);
 		//System.out.println(" Halt: " + stop_id + " " + departure_time);
 	}
 
@@ -108,6 +111,10 @@ public class trip {
 
 	public Vector<stopTime> getStopVector() {
 		return stopVector;
+	}
+	
+	public Vector<Integer> getStopIdVector() {
+		return stopIdVector;
 	}
 	
 	public void setMon(boolean mon) {

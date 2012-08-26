@@ -1,24 +1,21 @@
 package de.uulm.datalove.swu2gtfs;
 
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 public class stopTime {
 
 	private String arrival_time;
 	private String departure_time;
+	private String departure_time_24h;
 	private int stop_id;
 	private int stop_sequence;
 	private String stop_headsign;
 	
-	public stopTime(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign) {
+	public stopTime(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign, String departure_time_24h) {
 		this.setArrival_time(arrival_time);
 		this.setDeparture_time(departure_time);
 		this.setStop_id(stop_id);
 		this.setStop_sequence(stop_sequence);
-		this.setStop_headsign(stop_headsign);		
+		this.setStop_headsign(stop_headsign);
+		this.setDeparture_time_24h(departure_time_24h);
 	}
 
 	public void setArrival_time(String arrival_time) {
@@ -36,6 +33,15 @@ public class stopTime {
 	public String getDeparture_time() {
 		return departure_time;
 	}
+	
+	public void setDeparture_time_24h(String departure_time_24h) {
+		this.departure_time_24h = departure_time_24h;
+	}
+
+	public String getDeparture_time_24h() {
+		return departure_time_24h;
+	}
+
 	
 	public void setStop_id(int stop_id) {
 		this.stop_id = stop_id;

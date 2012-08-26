@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -19,45 +18,51 @@ public class Parser {
 	private static String direction;
 	private static int startLine;
 	private static String tripIdentifier;
-	private static String hinweis;
+//	private static String hinweis; // cant recall what this was meant to do. Badumts.
 
 	
 	public Parser(String[] directories, HashMap<String, Route> routes) {
 		if (directories.length > 0) {
 			for (int i = 0; i < directories.length; i++) {
 				File folder = new File(directories[i]);
-				File[] listOfFiles = folder.listFiles();
-				
-				for (int j = 0; j < listOfFiles.length; j ++) {
-					parseCSV(listOfFiles[j].getAbsolutePath(), routes);
+				if (folder.exists()) {
+					File[] listOfFiles = folder.listFiles();
+					
+					for (int j = 0; j < listOfFiles.length; j ++) {
+						parseCSV(listOfFiles[j].getAbsolutePath(), routes);
+					}
+				} else {
+					System.err.println("Provided directory " + directories[i] + " does not exist. Skipping this.");
 				}
-				
 				
 			}
 		} else {
-			System.err.println("Keinen Auslesepfad als Parameter angegeben. Breche ab.");
+			System.err.println("No path to read CSV files from provided. Pass at least one along as a parameter, pls.");
+			System.exit(1);
 		}
 	
 	}
 	
 	public static void parseCSV(String csvPath, HashMap<String, Route> routes) {
-		System.out.println("Verarbeite nun " + csvPath);
+		System.out.println("Working on " + csvPath);
 		try {
 			
-			// Dateinamen zerlegen. Uebliches Schema
+			// Splitting up the file name. Typical pattern:
 			// 11001zR0
-			// 11 Betriebszweig; 001 Liniennummer (mit 87 ergaenzen), R/H: Rueck/Hin, 0 Service_ID (0= Wochentag)
+			// 11 Betriebszweig; 001 Liniennummer (append 87 to the start), R/H: Rueck/Hin, 0 Service_ID (0= Weekday, …)
 			
 			Route currentRoute;
-			int startColumn = 4; // erklaerung siehe unten bei der Abfrage.
+			int startColumn = 4; // This is explained farther below
 			
 			String route[] = csvPath.split("/");
-			String routeName = route[route.length-1];
+			String routeName = route[route.length-1]; // last part, i.e. the file name
 				
 			route_type = (String) routeName.subSequence(0, 2);
+				// 11 is tram service, i.e. route_type 0. Otherwise buses, i.e. route_type 7
 				if (route_type.equals("11")) {
-					route_type = "0";
+					route_type = "0"; 
 				} else if (route_type.equals("10")){ route_type = "7"; }
+			// Affix 87 to the front. Linie 1 becomes 87001 to conform with DING naming practice.
 			route_no = "87" + (String) routeName.substring(2,5);
 			direction = routeName.substring(6,7);
 				if (direction.equals("H")) { intDirection = 0; }
@@ -71,7 +76,7 @@ public class Parser {
 			}
 
 			
-			// Abfrage, ob diese Route bereits existiert
+			// Check whether this route already exists
 			
 			if (routes.containsKey(route_no)) {
 				currentRoute = routes.get(route_no);
@@ -88,16 +93,15 @@ public class Parser {
 			
 			String [] tripIndices = (String[]) csvList.get(0);
 			
-			// Lege die Spalte fest, in der die erste Abfahrt stattfindet. Falls Spalte 3
-			// komplett leer ist (kommt vor), wird die startColumn erhoeht.
-			// Handelt es sich um Nachtbusse (901, 902,...), beginnt der erste Trip
-			// schon in Spalte 3!
+			// Define column which indicates the first stop on a trip. If column 3 is
+			// completely empty (wchich happens), startColumn gets incremented.
+			// If this is a nightbus (901, 902, …), the first trip starts in column 3!
 			if (tripIndices[3].isEmpty()) {
 				startColumn++;
 			}
 			
-			// Dieser Block findet heraus, wo die erste Abfahrt startet und übernimmt
-			// dies für den Rest der Zeiten im CSV
+			// This block finds out in which line the first trip starts and uses it
+			// for the rest of the CSV file
 			for (int line = 3; line < 10; line ++) {
 			   String [] currentLine = (String[]) csvList.get(line);
 			   if (currentLine[0].equals("1")) {
@@ -120,13 +124,17 @@ public class Parser {
 						// an den Punkten aufsplitten, Doppelpunkte einfuegen und :00 anhaengen.
 						
 						String splitTime[] = currentLine[column].split(" ");
+						String c24hTime;
 						String cleanTime = splitTime[splitTime.length-1];
 						splitTime = cleanTime.split("\\.");
+						int hr = Integer.parseInt(splitTime[0]);
+						if (hr > 23) hr = hr - 24;
+						c24hTime = hr + ":" + splitTime[1] + ":00";
 						cleanTime = splitTime[0] + ":" + splitTime[1] + ":00";
 						
 						// Trip hinzufuegen
 						newTrip.addStop(cleanTime, cleanTime, 
-								9000000 + Integer.parseInt(currentLine[1]), sequence, "");
+								9000000 + Integer.parseInt(currentLine[1]), sequence, "", c24hTime);
 						sequence++;
 					} 
 				}
@@ -209,10 +217,8 @@ public class Parser {
 				currentRoute.addTrip(tripIdentifier + calendar, newTrip); }
 			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

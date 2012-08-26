@@ -1,7 +1,6 @@
 package de.uulm.datalove.swu2gtfs;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 public class Route {
 	

@@ -10,23 +10,26 @@ Run it in java and provide a path to a directory filled to the brim with SWU's t
 
 ## what it does
 
-You'll end up with two files: trips.txt and stop_times.txt. Both should be valid GTFS files.
+You'll end up with three files: shapes.txt, trips.txt and stop_times.txt. All of them should be valid GTFS files.
 
 ## what it doesn't
 
-You will still need to provide the rest of all the neccessary files: 
+You will still need to provide the rest of all the necessary files: 
 
 * agency.txt and routes.txt: Shouldn't be a problem 
 * stops.txt: Can be extracted from the KMZ files provided on ulmapi.de
 * calendar.txt: Is pretty static. Right now, "0" is weekdays, "2" saturdays and "3" sundays. The rest of the schedule (Ss, Sf, Fa, etc.) goes according to the plain text notes in the CSV files. Refer to ulmapi.de as to what they mean.
 * frequencies.txt: Requires manual work: Compare the CSV to the printed schedule, delete the recurring trips before parsing and manually insert according entries into frequencies.txt
 * calendar_dates.txt: This one is tricky -- i.e., right now, it will take manual work.
-* shapes.txt: This one is even trickier and should be automated. No idea right now as to how that would work
 
 ## wishlist
 * automatic recognition of recurring trips and managing those into frequencies.txt
-* automatic recognition/classing of identical trips and requesting shapefiles for shapes.txt
 * some way of parsing SWU's (different) calendar classification for calendar_dates.txt
 
 ## further reading
 * GTFS specification: https://code.google.com/intl/de-DE/transit/spec/transit_feed_specification.html
+
+## changelog
+* 2011-12-18 first published version
+* 2012-08-24 added method to compare trips and group them when the follow the same route (for shapefiles)
+* 2012-08-25 requesting XML output from DING.eu and extracting route shapes for shapes.txt
