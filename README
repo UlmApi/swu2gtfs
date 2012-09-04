@@ -33,3 +33,4 @@ You will still need to provide the rest of all the necessary files:
 * 2011-12-18 first published version
 * 2012-08-24 added method to compare trips and group them when the follow the same route (for shapefiles)
 * 2012-08-25 requesting XML output from DING.eu and extracting route shapes for shapes.txt
+* 2012-09-04 also taking destination IDs from the XML output into account and using it for trip headsign information

@@ -16,11 +16,15 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+
 public class uniqueTripFinder {
 
+	private String headsign;
+	
 	public uniqueTripFinder(HashMap<String, Route> routes, StringBuffer output) {
 		System.out.println("Trying to find unique trips.");
 		
@@ -63,11 +67,13 @@ public class uniqueTripFinder {
 	    		   
 	    		   if (shapeRequest(tStart, tDest, tStartTime, date, shapeName, output)) {
 	    			   tTrip.setShape_id(shapeName);
+	    			   tTrip.setTrip_headsign(headsign);
 		    		   
 		    		   for (String oTidentifier: trips.keySet()) {
 		    			   if (trips.get(oTidentifier).getShape_id().isEmpty()) {
 		    				   if (trips.get(oTidentifier).getStopIdVector().equals(tTrip.getStopIdVector())) {
 		    					   trips.get(oTidentifier).setShape_id(shapeName);
+		    					   trips.get(oTidentifier).setTrip_headsign(headsign);
 		    					   System.out.print(".");
 		    					   instances++;
 		    				   }
@@ -75,7 +81,8 @@ public class uniqueTripFinder {
 		    		   }
 	    		   }	    		   
 	    		   
-	    		   System.out.println(instances + " instances found.");
+	    		   System.out.println(instances + " instances found.\n" +
+	    		   		"Headsign for this trip is \"" + headsign +"\"");
 	    		   
 	    	   }
 	       }
@@ -110,19 +117,29 @@ public class uniqueTripFinder {
 
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		
-		XPathExpression expr = xpath.compile("//itdRoute[@changes='0']/itdPartialRouteList/itdPartialRoute/itdPathCoordinates/itdCoordinateString");
+		// This specifies the XPath to the shapestring
+		XPathExpression shpexpr = xpath.compile("//itdRoute[@changes='0']/itdPartialRouteList/itdPartialRoute/itdPathCoordinates/itdCoordinateString");
+		// And this should take care of the means of transport. We'll grab the Headsign from that.
+		XPathExpression dstexpr = xpath.compile("//itdRoute[@changes='0']/itdPartialRouteList/itdPartialRoute/itdMeansOfTransport");
 
-		Object result = expr.evaluate(doc, XPathConstants.NODESET);
-		NodeList nodes = (NodeList) result;
+		Object shpresult = shpexpr.evaluate(doc, XPathConstants.NODESET);
+		Object dstresult = dstexpr.evaluate(doc, XPathConstants.NODE);
+		NodeList shpnodes = (NodeList) shpresult;
+		Node dstnode = (Node) dstresult;
 		
 		// No routes found.
-		if (nodes.getLength() == 0) { 
+		if (shpnodes.getLength() == 0) { 
 			System.err.println("No trips for this relation found. Please fix this.");
+			headsign = "";
 			return false;			
 		} else {
 			// get the first item (itdCoordinateString), its Child Node (its content)
 			// and look at its value. This is the coordinates string we need to transform.
-		    String coordinates = nodes.item(0).getChildNodes().item(0).getNodeValue();
+				
+		    // Taking care of the headsign.
+		    headsign = dstnode.getAttributes().getNamedItem("destination").getNodeValue();
+			
+		    String coordinates = shpnodes.item(0).getChildNodes().item(0).getNodeValue();
 		    coordinates = coordinates.replaceAll(".00000", "");
 		    coordinates = coordinates.replaceAll(" ", ",");
 		    
@@ -147,8 +164,9 @@ public class uniqueTripFinder {
 		    	}
 		    
 		    }
-		    
+
 		    return true;
+
 		    
 		}
 		} catch (ParserConfigurationException e) {
@@ -167,6 +185,7 @@ public class uniqueTripFinder {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		headsign = "";
 		return false;
 		
 	}
