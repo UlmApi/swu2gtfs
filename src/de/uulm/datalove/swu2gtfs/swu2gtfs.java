@@ -30,7 +30,7 @@ public class swu2gtfs {
 
 		System.out.println(routeCounter + " Routes with " + tripCounter + " trips created.");
 		
-		StringBuffer shapeOutput = new StringBuffer("shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence\n");
+		StringBuffer shapeOutput = new StringBuffer("shape_id,shape_pt_lon,shape_pt_lat,shape_pt_sequence\n");
 		new uniqueTripFinder(routes, shapeOutput);
 		new stoptimesWriter(routes);
 		new tripsWriter(routes);
