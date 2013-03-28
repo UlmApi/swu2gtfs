@@ -9,6 +9,7 @@ import java.util.List;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+
 public class Parser {
 
 	private static String route_type;
@@ -246,7 +247,8 @@ public class Parser {
 				}
 
 				currentRoute.addTrip(tripIdentifier + calendar, newTrip); }
-			
+
+		reader.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
