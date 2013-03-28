@@ -44,16 +44,16 @@ public class uniqueTripFinder {
 	    		   int instances = 1;
 	    		   System.out.print("New unique trip found, let's call it " + shapeName);
 	    		   
-	    		   String date = "20120823";
+	    		   String date = "20130205";
 	    		   if(tTrip.sat() || tTrip.preholiday()) {
-	    			   date = "20120825";
+	    			   date = "20130209";
 	    		   } else if (tTrip.sun()) {
-	    			   date = "20120826";
+	    			   date = "20130210";
 	    		   }
 	    		   Vector<stopTime> tTripStops = tTrip.getStopVector();
-	    		   int tStart = tTripStops.get(0).getStop_id();
+	    		   int tStart = tTripStops.get(0).getStop_id() / 100;
 	    		   String tStartTime = tTripStops.get(0).getDeparture_time_24h();
-	    		   int tDest = tTripStops.get(tTripStops.size()-1).getStop_id();
+	    		   int tDest = tTripStops.get(tTripStops.size()-1).getStop_id() / 100;
 	    		   
 	    		   // checking whether there is a connection with shape information on ding.eu
 	    		   // if yes, the name is set.
@@ -66,9 +66,9 @@ public class uniqueTripFinder {
 
 	    		   
 	    		   if (shapeRequest(tStart, tDest, tStartTime, date, shapeName, output)) {
+//	    		   if (true) {
 	    			   tTrip.setShape_id(shapeName);
 	    			   tTrip.setTrip_headsign(headsign);
-		    		   
 		    		   for (String oTidentifier: trips.keySet()) {
 		    			   if (trips.get(oTidentifier).getShape_id().isEmpty()) {
 		    				   if (trips.get(oTidentifier).getStopIdVector().equals(tTrip.getStopIdVector())) {
@@ -79,7 +79,12 @@ public class uniqueTripFinder {
 		    				   }
 		    			   }
 		    		   }
-	    		   }	    		   
+
+	    		   } else {
+	    			   tTrip.setShape_id("missingShape");
+		    		   
+	    		   }
+	    		   	    		   
 	    		   
 	    		   System.out.println(instances + " instances found.\n" +
 	    		   		"Headsign for this trip is \"" + headsign +"\"");
@@ -129,7 +134,7 @@ public class uniqueTripFinder {
 		
 		// No routes found.
 		if (shpnodes.getLength() == 0) { 
-			System.err.println("No trips for this relation found. Please fix this.");
+			System.err.println("No trips from " + startId + " to " + destId + " found on " + date + " at " + time + ". Please fix this.\n");
 			headsign = "";
 			return false;			
 		} else {
@@ -155,7 +160,7 @@ public class uniqueTripFinder {
 			    	String suffix2 = coordArray[ca+1].substring(coordArray[ca+1].length()-6, coordArray[ca].length());
 			    	String prefix2 = coordArray[ca+1].substring(0, coordArray[ca+1].length()-6);
 			    	
-			    	System.out.println(prefix1 + "." + suffix1 + ", " + prefix2 + "." + suffix2);
+			    	// System.out.println(prefix1 + "." + suffix1 + ", " + prefix2 + "." + suffix2);
 			    	
 			    	output.append(shapeName + "," + prefix1 + "." + suffix1 + "," + prefix2 + "." + suffix2 + "," + sequence + "\n");
 

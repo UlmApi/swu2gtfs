@@ -24,6 +24,7 @@ public class tripsWriter {
 				trip cT = trips.get(cTidentifier);
 				output.append(currentRoute.route_id() + "," + cT.getService_id() + "," + cT.getTrip_id() + "," +
 				cT.getTrip_headsign() + "," + cT.getDirection_id() + "," +cT.getBlock_id() + "," + cT.getShape_id() + "\n");
+				//cT.getTrip_headsign() + "," + cT.getDirection_id() + "," +cT.getBlock_id() + "," + "" + "\n");
 			}
 	       System.out.print(".");
 	    }

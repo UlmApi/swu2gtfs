@@ -29,7 +29,11 @@ public class Parser {
 					File[] listOfFiles = folder.listFiles();
 					
 					for (int j = 0; j < listOfFiles.length; j ++) {
-						parseCSV(listOfFiles[j].getAbsolutePath(), routes);
+						if (listOfFiles[j].getName().contains(".~")) {
+							System.err.println("Skipping file " + listOfFiles[j].getName());
+						} else {
+							parseCSV(listOfFiles[j].getAbsolutePath(), routes);	
+						}
 					}
 				} else {
 					System.err.println("Provided directory " + directories[i] + " does not exist. Skipping this.");
@@ -71,8 +75,7 @@ public class Parser {
 			System.out.println("Route type: " + route_type + ", route no: " + route_no + ", calendar: " + calendar + ", direction: " + direction); 
 	
 			if (Integer.parseInt(route_no)>87900) {
-				startColumn = 3;
-				calendar = "nightbus";
+				calendar = "Ys"; // nightbus designation since 2012
 			}
 
 			
@@ -94,14 +97,15 @@ public class Parser {
 			String [] tripIndices = (String[]) csvList.get(0);
 			
 			// Define column which indicates the first stop on a trip. If column 3 is
-			// completely empty (wchich happens), startColumn gets incremented.
-			// If this is a nightbus (901, 902, …), the first trip starts in column 3!
+			// completely empty (which happens), startColumn gets incremented.
+			// This also is probably superfluous since 2012. TODO
 			if (tripIndices[3].isEmpty()) {
 				startColumn++;
 			}
 			
 			// This block finds out in which line the first trip starts and uses it
-			// for the rest of the CSV file
+			// for the rest of the CSV file. This is done by looking at the first column
+			// and checking line for line until a "1" (for first stop) comes along.
 			for (int line = 3; line < 10; line ++) {
 			   String [] currentLine = (String[]) csvList.get(line);
 			   if (currentLine[0].equals("1")) {
@@ -112,7 +116,9 @@ public class Parser {
 			for (int column=startColumn; column<tripIndices.length; column++) {
 				
 				String[] tripStartId = tripIndices[column].split(":");
-				tripIdentifier = route_no + direction + calendar + "-" + tripStartId[0] + tripStartId[1];
+				tripIdentifier = route_no + direction + calendar + "-" + tripStartId[0].subSequence(1, 3) + tripStartId[1];
+				// Using the subSequence of the hours because the 2012 schedule was badly exported 
+				// and came along with a leading whitespace.
 				trip newTrip = new trip(calendar , tripIdentifier, "", "", intDirection, "", "");
 				int sequence = 1;
 				
@@ -132,9 +138,30 @@ public class Parser {
 						c24hTime = hr + ":" + splitTime[1] + ":00";
 						cleanTime = splitTime[0] + ":" + splitTime[1] + ":00";
 						
-						// Trip hinzufuegen
-						newTrip.addStop(cleanTime, cleanTime, 
-								9000000 + Integer.parseInt(currentLine[1]), sequence, "", c24hTime);
+						// simpelster Fall: Ankunft ist gleich Abfahrt (genauer gehts nicht)
+						String cleanDepartureTime = cleanTime;
+						
+						// überprüfen: Ist dies ein Halt mit Aufenthalt? Falls ja, steht in Spalte 3 „an (1)“
+						if (currentLine[3].contains("an (1)")) {
+							
+							// Zeilenzaehler inkrementieren und die naechste Zeile holen, um die Abfahrtzeit zu bekommen
+							line++;
+							String [] nextLine = (String[]) csvList.get(line);
+							
+							// wie oben
+							splitTime = nextLine[column].split(" ");
+							cleanDepartureTime = splitTime[splitTime.length-1];
+							splitTime = cleanDepartureTime.split("\\.");
+							cleanDepartureTime = splitTime[0] + ":" + splitTime[1] + ":00";
+
+						} 
+						
+						// Halt zum Trip hinzufuegen: Arrival time, departure time, vierstellige OLIF aus der zweiten
+						// Spalte (Index 1) um zwei Stellen nach links geschoben (mal 100) plus fuehrende 900,
+						// darauf dann das Haltepunktsuffix (fuenfte Spalte/Index 4) etc.
+						newTrip.addStop(cleanTime, cleanDepartureTime, 
+								900000000 + Integer.parseInt(currentLine[1])*100 + Integer.parseInt(currentLine[4]), 
+								sequence, "", c24hTime);
 						sequence++;
 					} 
 				}
@@ -145,25 +172,27 @@ public class Parser {
 				String [] currentLine = (String[]) csvList.get(2);
 				
 				// Nur an Vorlesungstagen der uulm
-				if (currentLine[column].toLowerCase().equals("su")) {
+				if (currentLine[column].toLowerCase().contains("su")) {
 					newTrip.setUni(true);
 					newTrip.setService_id("Su");
 				} 
 				
 				// Nicht vor Feiertagen
-				if (currentLine[column].toLowerCase().equals("na")) {
+				if (currentLine[column].toLowerCase().contains("na")) {
 					newTrip.setNotpreholiday(true);
 					newTrip.setService_id("Na");
 				} 
 
 				// Nur an Schultagen
-				if (currentLine[column].toLowerCase().equals("ss")) {
+				if (currentLine[column].toLowerCase().contains("ss") ||
+					currentLine[column].toLowerCase().contains("rs")) {
 					newTrip.setSchool(true);
 					newTrip.setService_id("Ss");
 				}
 				
 				// Nicht an Schultagen
-				if (currentLine[column].toLowerCase().equals("sf")) {
+				if (currentLine[column].toLowerCase().contains("sf") ||
+					currentLine[column].toLowerCase().contains("rf")) {
 					newTrip.setNoschool(true);
 					newTrip.setService_id("Sf");
 				}
@@ -178,7 +207,8 @@ public class Parser {
 					newTrip.setFri(true);
 										
 					// Nur Freitags und vor Feiertagen
-					if (currentLine[column].toLowerCase().equals("fa")) {
+					if (currentLine[column].toLowerCase().contains("fa") ||
+						currentLine[column].toLowerCase().contains("yr")) {
 						newTrip.setMon(false);
 						newTrip.setTue(false);
 						newTrip.setWed(false);
@@ -197,13 +227,14 @@ public class Parser {
 					newTrip.setSun(true);
 					
 					// Sonntags, nicht vor Feiertagen
-					if (currentLine[column].toLowerCase().equals("nb")) {
+					if (currentLine[column].toLowerCase().contains("nb")) {
 						newTrip.setNotpreholiday(true);
 						newTrip.setService_id("Nb");
 					}
 					
 					// Sonntags, nur vor Feiertagen
-					if (currentLine[column].toLowerCase().equals("fb")) {
+					if (currentLine[column].toLowerCase().contains("fb") ||
+						currentLine[column].toLowerCase().contains("ys")) {
 						newTrip.setPreholiday(true);
 						newTrip.setService_id("Fb");
 					}
