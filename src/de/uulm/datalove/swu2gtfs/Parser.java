@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import de.uulm.datalove.diva2gtfs.entities.Route;
+import de.uulm.datalove.diva2gtfs.entities.Trip;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 
@@ -120,7 +123,7 @@ public class Parser {
 				tripIdentifier = route_no + direction + calendar + "-" + tripStartId[0].subSequence(1, 3) + tripStartId[1];
 				// Using the subSequence of the hours because the 2012 schedule was badly exported 
 				// and came along with a leading whitespace.
-				trip newTrip = new trip(calendar , tripIdentifier, "", "", intDirection, "", "");
+				Trip newTrip = new Trip(calendar , tripIdentifier, "", "", intDirection, "", "");
 				int sequence = 1;
 				
 				for (int line = startLine; line < csvList.size(); line ++) {

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
+import de.uulm.datalove.diva2gtfs.entities.Route;
+import de.uulm.datalove.diva2gtfs.entities.Trip;
+
 public class tripsWriter {
 	
 	public tripsWriter(HashMap<String, Route> routes) {
@@ -18,10 +21,10 @@ public class tripsWriter {
 	    {
 	       Route currentRoute = routes.get(name);
 	       
-	       HashMap<String, trip> trips = currentRoute.trips();
+	       HashMap<String, Trip> trips = currentRoute.trips();
 	       
 			for (String cTidentifier: trips.keySet()) {
-				trip cT = trips.get(cTidentifier);
+				Trip cT = trips.get(cTidentifier);
 				output.append(currentRoute.route_id() + "," + cT.getService_id() + "," + cT.getTrip_id() + "," +
 				cT.getTrip_headsign() + "," + cT.getDirection_id() + "," +cT.getBlock_id() + "," + cT.getShape_id() + "\n");
 				//cT.getTrip_headsign() + "," + cT.getDirection_id() + "," +cT.getBlock_id() + "," + "" + "\n");

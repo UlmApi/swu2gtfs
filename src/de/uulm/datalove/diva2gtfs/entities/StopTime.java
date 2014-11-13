@@ -1,6 +1,6 @@
-package de.uulm.datalove.swu2gtfs;
+package de.uulm.datalove.diva2gtfs.entities;
 
-public class stopTime {
+public class StopTime {
 
 	private String arrival_time;
 	private String departure_time;
@@ -9,7 +9,7 @@ public class stopTime {
 	private int stop_sequence;
 	private String stop_headsign;
 	
-	public stopTime(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign, String departure_time_24h) {
+	public StopTime(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign, String departure_time_24h) {
 		this.setArrival_time(arrival_time);
 		this.setDeparture_time(departure_time);
 		this.setStop_id(stop_id);

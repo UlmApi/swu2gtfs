@@ -8,23 +8,23 @@ I tried to comment rather liberally, but am a poor programmer, so both comments 
 
 Run it in java and provide a path to a directory filled to the brim with time table CSV files (and nothing else). Information about the route names will be expected through the file name. More documentation about the table layout, naming conventions and so on is available in the transport section of the ulmapi.de wiki system.
 
+Additionally, `tagesarten2gtfs.pl` and `kml2gtfs.pl` extract SWU's calendar information and KML stop definition.
+
 ## what it does
 
-You'll end up with three files: shapes.txt, trips.txt and stop_times.txt. All of them should be valid GTFS files.
+You'll end up with three files: `shapes.txt`, `trips.txt` and `stop_times.txt`. All of them should be valid GTFS files.
 
 ## what it doesn't
 
 You will still need to provide the rest of all the necessary files: 
 
-* agency.txt and routes.txt: Shouldn't be a problem 
-* stops.txt: Can be extracted from the KMZ files provided on ulmapi.de
-* calendar.txt: Is pretty static. Right now, "0" is weekdays, "2" saturdays and "3" sundays. The rest of the schedule (Ss, Sf, Fa, etc.) goes according to the plain text notes in the CSV files. Refer to ulmapi.de as to what they mean.
-* frequencies.txt: Requires manual work: Compare the CSV to the printed schedule, delete the recurring trips before parsing and manually insert according entries into frequencies.txt. Or disregard this completely and only use the calendar_dates.txt data (current approach)
-* calendar_dates.txt: This one is tricky -- i.e., right now, it will take manual work. (current approach)
+* `agency.txt` and `routes.txt`: Shouldn't be a problem 
+* `stops.txt`: Can be extracted from the KMZ files provided on ulmapi.de through the `kml2gtfs.pl` script
+* `calendar.txt`: Is pretty static. Right now, "0" is weekdays, "2" saturdays and "3" sundays. The rest of the schedule (Ss, Sf, Fa, etc.) goes according to the plain text notes in the CSV files. Refer to ulmapi.de as to what they mean. The `tagesarten2gtfs.pl` is a quick hack using a CSV file with SWU's Tagesarten to create a `calendar_dates.txt`
+* `frequencies.txt`: Requires manual work: Compare the CSV to the printed schedule, delete the recurring trips before parsing and manually insert according entries into frequencies.txt. Or disregard this completely and only use the `calendar_dates.txt` data (current approach)
 
 ## wishlist
 * automatic recognition of recurring trips and managing those into frequencies.txt
-* some way of parsing SWU's (different) calendar classification for calendar_dates.txt
 
 ## further reading
 * GTFS specification: https://code.google.com/intl/de-DE/transit/spec/transit_feed_specification.html
@@ -36,3 +36,4 @@ You will still need to provide the rest of all the necessary files:
 * 2012-09-04 also taking destination IDs from the XML output into account and using it for trip headsign information
 * 2012-09-14 Bugfix: Mixed up lat and long for shapes.txt output made route shapes appear halfway across the globe :>
 * 2013-02-18 included OLIF suffixes in order to match every bus trip to one specific „Haltepunkt“. The DING.eu output is no longer used due to license issues; this version depends on SWU data only and is not able to provide shapefiles.
+* 2014-11-13 ADDED: `tagesarten2gtfs.pl` and `kml2gtfs.pl`

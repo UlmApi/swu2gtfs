@@ -20,6 +20,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import de.uulm.datalove.diva2gtfs.entities.Route;
+import de.uulm.datalove.diva2gtfs.entities.StopTime;
+import de.uulm.datalove.diva2gtfs.entities.Trip;
+
 
 public class uniqueTripFinder {
 
@@ -32,11 +36,11 @@ public class uniqueTripFinder {
 	    for( String name: routes.keySet() )
 	    {
 	       // Extract hashmap with all trips of current route
-	       HashMap<String, trip> trips = routes.get(name).trips();
+	       HashMap<String, Trip> trips = routes.get(name).trips();
 
 	       // Iterate over all trips of current route
 	       for (String cTidentifier: trips.keySet()) {
-	    	   trip tTrip = trips.get(cTidentifier);
+	    	   Trip tTrip = trips.get(cTidentifier);
 	    	   // … and find out whether the trip already has a shapeId set.
 	    	   // if not, this will be the template to compare the rest of the trips with.
 	    	   if (tTrip.getShape_id().isEmpty()) {
@@ -50,7 +54,7 @@ public class uniqueTripFinder {
 	    		   } else if (tTrip.sun()) {
 	    			   date = "20130210";
 	    		   }
-	    		   Vector<stopTime> tTripStops = tTrip.getStopVector();
+	    		   Vector<StopTime> tTripStops = tTrip.getStopVector();
 	    		   int tStart = tTripStops.get(0).getStop_id() / 100;
 	    		   String tStartTime = tTripStops.get(0).getDeparture_time_24h();
 	    		   int tDest = tTripStops.get(tTripStops.size()-1).getStop_id() / 100;
@@ -81,7 +85,7 @@ public class uniqueTripFinder {
 		    		   }
 
 	    		   } else {
-	    			   tTrip.setShape_id("missingShape");
+	    			   //tTrip.setShape_id("missingShape");
 		    		   
 	    		   }
 	    		   	    		   

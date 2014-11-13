@@ -1,8 +1,9 @@
-package de.uulm.datalove.swu2gtfs;
+package de.uulm.datalove.diva2gtfs.entities;
 
 import java.util.Vector;
 
-public class trip {
+
+public class Trip {
 
 	private String service_id;
 	private String trip_id;
@@ -11,7 +12,7 @@ public class trip {
 	private String block_id;
 	private String shape_id;
 	private int direction_id;
-	private Vector<stopTime> stopVector;
+	private Vector<StopTime> stopVector;
 	private Vector<Integer> stopIdVector;
 	private boolean mon = false;
 	private boolean tue = false;
@@ -26,7 +27,7 @@ public class trip {
 	private boolean noschool = false;
 	private boolean uni = false;
 	
-	public trip(String service_id, String trip_id, 
+	public Trip(String service_id, String trip_id, 
 			String trip_headsign, String trip_short_name, int direction_id, String block_id, String shape_id) {
 		//System.out.println("Neuer Kurs angelegt, Linie " + route_id + ", Kurs " + trip_id);
 		this.setService_id(service_id);
@@ -36,13 +37,13 @@ public class trip {
 		this.setDirection_id(direction_id);
 		this.setBlock_id(block_id);
 		this.setShape_id(shape_id);
-		stopVector = new Vector<stopTime>();
+		stopVector = new Vector<StopTime>();
 		stopIdVector = new Vector<Integer>();
 	}
 	
 	
 	public void addStop(String arrival_time, String departure_time, int stop_id, int stop_sequence, String stop_headsign, String departure_time_24h) {
-		stopVector.add(new stopTime(arrival_time, departure_time, stop_id, stop_sequence, stop_headsign, departure_time_24h));
+		stopVector.add(new StopTime(arrival_time, departure_time, stop_id, stop_sequence, stop_headsign, departure_time_24h));
 		stopIdVector.add(stop_id);
 		//System.out.println(" Halt: " + stop_id + " " + departure_time);
 	}
@@ -104,12 +105,12 @@ public class trip {
 	}
 
 
-	public void setStopVector(Vector<stopTime> stopVector) {
+	public void setStopVector(Vector<StopTime> stopVector) {
 		this.stopVector = stopVector;
 	}
 
 
-	public Vector<stopTime> getStopVector() {
+	public Vector<StopTime> getStopVector() {
 		return stopVector;
 	}
 	
@@ -217,10 +218,10 @@ public class trip {
 	public String getGtfsStopTimes() {
 		String output = new String();
 
-		Vector<stopTime> stops = this.getStopVector();
+		Vector<StopTime> stops = this.getStopVector();
 		
 		for (int stopIterator = 0; stopIterator < stops.size() ; stopIterator++) {
-			stopTime cS = stops.get(stopIterator);
+			StopTime cS = stops.get(stopIterator);
 			output = output + (this.getTrip_id() + "," + cS.getArrival_time() + "," + cS.getDeparture_time()
 					+ "," + cS.getStop_id() + "," + cS.getStop_sequence() + "," + cS.getStop_headsign()
 					+ ",,,\n");

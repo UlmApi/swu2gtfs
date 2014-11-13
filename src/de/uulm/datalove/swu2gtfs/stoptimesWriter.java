@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
+import de.uulm.datalove.diva2gtfs.entities.Route;
+import de.uulm.datalove.diva2gtfs.entities.Trip;
+
 public class stoptimesWriter {
 	
 	public stoptimesWriter(HashMap<String, Route> routes) {
@@ -20,7 +23,7 @@ public class stoptimesWriter {
 	    {
 	       Route currentRoute = routes.get(name);
 	       // Extract hashmap with all trips of current route
-	       HashMap<String, trip> trips = currentRoute.trips();
+	       HashMap<String, Trip> trips = currentRoute.trips();
 
 	       // Iterate over all trips of current route
 	       for (String cTidentifier: trips.keySet()) {
