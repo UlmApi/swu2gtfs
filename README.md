@@ -8,6 +8,12 @@ I tried to comment rather liberally, but am a poor programmer, so both comments 
 
 Run it in java and provide a path to a directory filled to the brim with time table CSV files (and nothing else). Information about the route names will be expected through the file name. More documentation about the table layout, naming conventions and so on is available in the transport section of the ulmapi.de wiki system.
 
+```
+javac -cp ".:./../lib/opencsv-2.3.jar" de/uulm/datalove/swu2gtfs/swu2gtfs.java
+java -cp ".:./../lib/opencsv-2.3.jar" de.uulm.datalove.swu2gtfs.swu2gtfs PATH_TO_CSV_FILES
+
+```
+
 Additionally, `tagesarten2gtfs.pl` and `kml2gtfs.pl` extract SWU's calendar information and KML stop definition.
 
 ## what it does
@@ -37,3 +43,5 @@ You will still need to provide the rest of all the necessary files:
 * 2012-09-14 Bugfix: Mixed up lat and long for shapes.txt output made route shapes appear halfway across the globe :>
 * 2013-02-18 included OLIF suffixes in order to match every bus trip to one specific „Haltepunkt“. The DING.eu output is no longer used due to license issues; this version depends on SWU data only and is not able to provide shapefiles.
 * 2014-11-13 ADDED: `tagesarten2gtfs.pl` and `kml2gtfs.pl`
+* 2015-12-06 ADDED: Forgotten utils subdirectory
+* 2015-12-06 CHANGED: Slight alterations to work with 2015/16 schedule files temporarily

@@ -89,6 +89,7 @@ public class csv2routes {
 					String [] currentLine = (String[]) csvList.get(line);
 					if (currentLine[0].equals("1")) {
 						startLine = line;
+						break;
 					}
 				}
 		
@@ -119,6 +120,7 @@ public class csv2routes {
 					
 							// simpelster Fall: Ankunft ist gleich Abfahrt (genauer gehts nicht)
 							String cleanDepartureTime = cleanTime;
+
 					
 							// überprüfen: Ist dies ein Halt mit Aufenthalt? Falls ja, steht in Spalte 3 „an (1)“
 							if (currentLine[3].contains("an (1)")) {
@@ -139,7 +141,7 @@ public class csv2routes {
 							// Spalte (Index 1) um zwei Stellen nach links geschoben (mal 100) plus fuehrende 900,
 							// darauf dann das Haltepunktsuffix (fuenfte Spalte/Index 4) etc.
 							newTrip.addStop(cleanTime, cleanDepartureTime, 
-									900000000 + Integer.parseInt(currentLine[1])*100 + Integer.parseInt(currentLine[4]), 
+									900000000 + Integer.parseInt(currentLine[1])*100, 
 									sequence, "", c24hTime);
 							sequence++;
 						} 
