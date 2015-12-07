@@ -141,7 +141,7 @@ public class csv2routes {
 							// Spalte (Index 1) um zwei Stellen nach links geschoben (mal 100) plus fuehrende 900,
 							// darauf dann das Haltepunktsuffix (fuenfte Spalte/Index 4) etc.
 							newTrip.addStop(cleanTime, cleanDepartureTime, 
-									900000000 + Integer.parseInt(currentLine[1])*100, 
+									9000000 + Integer.parseInt(currentLine[1]), 
 									sequence, "", c24hTime);
 							sequence++;
 						} 

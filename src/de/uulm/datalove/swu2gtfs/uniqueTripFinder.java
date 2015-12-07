@@ -48,11 +48,11 @@ public class uniqueTripFinder {
 	    		   int instances = 1;
 	    		   System.out.print("New unique trip found, let's call it " + shapeName);
 	    		   
-	    		   String date = "20130205";
+	    		   String date = "20151214";
 	    		   if(tTrip.sat() || tTrip.preholiday()) {
-	    			   date = "20130209";
+	    			   date = "20151219";
 	    		   } else if (tTrip.sun()) {
-	    			   date = "20130210";
+	    			   date = "20151220";
 	    		   }
 	    		   Vector<StopTime> tTripStops = tTrip.getStopVector();
 	    		   int tStart = tTripStops.get(0).getStop_id() / 100;
@@ -104,7 +104,7 @@ public class uniqueTripFinder {
 	
 	public boolean shapeRequest(int startId, int destId, String time, String date, String shapeName, StringBuffer output)  {
 		
-		String request = "http://www.ding.eu/ding3/XML_TRIP_REQUEST2" +
+		String request = "http://www.ding.eu/ding3/XSLT_TRIP_REQUEST2" +
 		"?itdDate=" + date +
 		"&itdTime=" + time + 
 		"&itdTripDateTimeDepArr=dep" + 
