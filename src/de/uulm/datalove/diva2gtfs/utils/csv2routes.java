@@ -139,9 +139,9 @@ public class csv2routes {
 							
 							// Halt zum Trip hinzufuegen: Arrival time, departure time, vierstellige OLIF aus der zweiten
 							// Spalte (Index 1) um zwei Stellen nach links geschoben (mal 100) plus fuehrende 900,
-							// darauf dann das Haltepunktsuffix (fuenfte Spalte/Index 4) etc.
+							// darauf dann das Haltepunktsuffix (vierte Spalte/Index 3) etc.
 							newTrip.addStop(cleanTime, cleanDepartureTime, 
-									9000000 + Integer.parseInt(currentLine[1]), 
+									900000000 + Integer.parseInt(currentLine[1])*100 + Integer.parseInt(currentLine[3]),  
 									sequence, "", c24hTime);
 							sequence++;
 						} 

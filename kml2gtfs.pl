@@ -29,7 +29,7 @@ sub process {
  # each placemark has a Point with x,y,z coordinates
  # the last sub-stop marks the location for the whole stop
 
- foreach my $stopfolder ($kml->findnodes('/kml:kml/kml:Document/kml:Folder/kml:Placemark')) {
+ foreach my $stopfolder ($kml->findnodes('/kml:kml/kml:Document/kml:Folder/kml:Folder')) {
     
     my $stop_code = $stopfolder->find('./kml:name');
     ( my $stop_name = $stop_code ) =~ s/.*, //;
