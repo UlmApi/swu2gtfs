@@ -1,0 +1,2 @@
+"feed_publisher_name","feed_publisher_url","feed_lang","feed_version"
+"SWU Nahverkehr Ulm/Neu-Ulm GmbH","http://www.swu.de/privatkunden/swu-nahverkehr.html","de","20151208"

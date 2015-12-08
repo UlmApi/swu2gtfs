@@ -5,6 +5,8 @@ use warnings;
 use utf8;
 use XML::LibXML;
 
+binmode STDOUT, ":encoding(utf8)";
+
 my $parser = XML::LibXML->new();
 
  if (@ARGV) {
