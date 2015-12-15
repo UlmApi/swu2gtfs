@@ -46,7 +46,7 @@ public class uniqueTripFinder {
 	    	   if (tTrip.getShape_id().isEmpty()) {
 	    		   String shapeName = tTrip.getTrip_id();
 	    		   int instances = 1;
-	    		   System.out.print("New unique trip found, let's call it " + shapeName);
+	    		   System.out.println("New unique trip found, let's call it " + shapeName);
 	    		   
 	    		   String date = "20151214";
 	    		   if(tTrip.sat() || tTrip.preholiday()) {
@@ -105,7 +105,8 @@ public class uniqueTripFinder {
 	public boolean shapeRequest(int startId, int destId, String time, String date, String shapeName, StringBuffer output)  {
 		
 		String request = "http://www.ding.eu/ding3/XSLT_TRIP_REQUEST2" +
-		"?itdDate=" + date +
+		"?outputFormat=XML" +
+		"&itdDate=" + date +
 		"&itdTime=" + time + 
 		"&itdTripDateTimeDepArr=dep" + 
 		"&locationServerActive=1" +
@@ -117,6 +118,7 @@ public class uniqueTripFinder {
 		"&coordListOutputFormat=STRING";
 		
 		System.out.println("Shape request for " + date + " at time " + time);
+		//System.out.println(request);
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
