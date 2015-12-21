@@ -44,7 +44,7 @@ public class swu2gtfs {
 			System.out.println(routeCounter + " Routes with " + tripCounter + " trips created.");
 
 						StringBuffer shapeOutput = new StringBuffer("shape_id,shape_pt_lon,shape_pt_lat,shape_pt_sequence\n");
-						new uniqueTripFinder(routes, shapeOutput);
+						new uniqueTripFinder(routes, shapeOutput); 
 			new stoptimesWriter(routes);
 			new tripsWriter(routes);
 
@@ -60,7 +60,7 @@ public class swu2gtfs {
 						}
 
 
-			System.out.println("Done.");
+			System.out.println("Done."); 
 
 		} else {
 			System.err.println("Usage: pass a directory with TSV timetable data");

@@ -229,6 +229,11 @@ public class Trip {
 
 		return output;
 	}
+
+	@Override
+	public String toString() {
+		return this.getTrip_id() + " to " + this.getTrip_headsign() + " service " + this.getService_id();
+	}
 	
 	
 

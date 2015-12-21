@@ -47,8 +47,9 @@ public class uniqueTripFinder {
 	    		   String shapeName = tTrip.getTrip_id();
 	    		   int instances = 1;
 	    		   System.out.println("New unique trip found, let's call it " + shapeName);
+	    		   System.out.println(tTrip.toString());
 	    		   
-	    		   String date = "20151214";
+	    		   String date = "20151221";
 	    		   if(tTrip.sat() || tTrip.preholiday()) {
 	    			   date = "20151219";
 	    		   } else if (tTrip.sun()) {
@@ -58,6 +59,7 @@ public class uniqueTripFinder {
 	    		   int tStart = tTripStops.get(0).getStop_id() / 100;
 	    		   String tStartTime = tTripStops.get(0).getDeparture_time_24h();
 	    		   int tDest = tTripStops.get(tTripStops.size()-1).getStop_id() / 100;
+	    		   int tVia = tTripStops.get(tTripStops.size()/2).getStop_id() / 100;
 	    		   
 	    		   // checking whether there is a connection with shape information on ding.eu
 	    		   // if yes, the name is set.
@@ -69,7 +71,7 @@ public class uniqueTripFinder {
 	    		   // which fall under the [in reality, nonexistent] route 16.
 
 	    		   
-	    		   if (shapeRequest(tStart, tDest, tStartTime, date, shapeName, output)) {
+	    		   if (shapeRequest(tStart, tDest, tVia, tStartTime, date, shapeName, output)) {
 //	    		   if (true) {
 	    			   tTrip.setShape_id(shapeName);
 	    			   tTrip.setTrip_headsign(headsign);
@@ -102,7 +104,7 @@ public class uniqueTripFinder {
 		
 	}
 	
-	public boolean shapeRequest(int startId, int destId, String time, String date, String shapeName, StringBuffer output)  {
+	public boolean shapeRequest(int startId, int destId, int viaId, String time, String date, String shapeName, StringBuffer output)  {
 		
 		String request = "http://www.ding.eu/ding3/XSLT_TRIP_REQUEST2" +
 		"?outputFormat=XML" +
@@ -114,11 +116,13 @@ public class uniqueTripFinder {
 		"&name_origin=" + startId +
 		"&type_destination=stop"+
 		"&name_destination=" + destId +
-		"&coordOutputFormat=WGS84" + 
+		"&type_via=stop" +
+		"&name_via=" + viaId +
+		"&coordOutputFormat=WGS84[DD.dddddddd]" + 
 		"&coordListOutputFormat=STRING";
 		
 		System.out.println("Shape request for " + date + " at time " + time);
-		//System.out.println(request);
+		System.out.println(request);
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db;
@@ -151,7 +155,6 @@ public class uniqueTripFinder {
 		    headsign = dstnode.getAttributes().getNamedItem("destination").getNodeValue();
 			
 		    String coordinates = shpnodes.item(0).getChildNodes().item(0).getNodeValue();
-		    coordinates = coordinates.replaceAll(".00000", "");
 		    coordinates = coordinates.replaceAll(" ", ",");
 		    
 		    System.out.println(coordinates);
@@ -161,14 +164,10 @@ public class uniqueTripFinder {
 		    
 		    for (int ca = 0; ca < coordArray.length; ca = ca+2) {
 		    	if (coordArray[ca].length()>4 && coordArray[ca+1].length()>4) {
-		    		String suffix1 = coordArray[ca].substring(coordArray[ca].length()-6, coordArray[ca].length());
-			    	String prefix1 = coordArray[ca].substring(0, coordArray[ca].length()-6);
-			    	String suffix2 = coordArray[ca+1].substring(coordArray[ca+1].length()-6, coordArray[ca].length());
-			    	String prefix2 = coordArray[ca+1].substring(0, coordArray[ca+1].length()-6);
+
+			    	// System.out.println(coordArray[ca] + ", " + coordArray[ca+1]);
 			    	
-			    	// System.out.println(prefix1 + "." + suffix1 + ", " + prefix2 + "." + suffix2);
-			    	
-			    	output.append(shapeName + "," + prefix1 + "." + suffix1 + "," + prefix2 + "." + suffix2 + "," + sequence + "\n");
+			    	output.append(shapeName + "," + coordArray[ca] + "," + coordArray[ca+1] + "," + sequence + "\n");
 
 			    	sequence++;
 		    		

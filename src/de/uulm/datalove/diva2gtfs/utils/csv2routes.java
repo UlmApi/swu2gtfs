@@ -206,7 +206,7 @@ public class csv2routes {
 
 					} else if (calendar.equals("2")) {
 						// Sa
-//						newTrip.setSat(true);
+						newTrip.setSat(true);
 						newTrip.setService_id("2");
 						
 						// 24.12. to 25.12.
@@ -221,7 +221,7 @@ public class csv2routes {
 				
 					} else if (calendar.equals("3")) {
 						// So
-//						newTrip.setSun(true);
+						newTrip.setSun(true);
 						newTrip.setService_id("3");
 						// Sonntags, nicht vor Feiertagen
 						if (currentLine[column].toLowerCase().contains("nb")) {
@@ -232,7 +232,7 @@ public class csv2routes {
 						// Sonntags, nur vor Feiertagen
 						if (currentLine[column].toLowerCase().contains("fb") ||
 							currentLine[column].toLowerCase().contains("ys")) {
-//							newTrip.setPreholiday(true);
+							newTrip.setPreholiday(true);
 							newTrip.setService_id("Fb");
 						}
 						
